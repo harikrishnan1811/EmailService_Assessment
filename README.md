@@ -12,6 +12,7 @@
 ## **Assumptions**
 - 'SendEmail' method is implemented and is integrated with a email provider.
 - 'IOStream' class contains the email property and the readOTP() is implemented.
+- StatusCodes are created as Constants in 'ServiceLayer.Constants' namespace.
 
 ## **Testing Approach**
 - We can use XUnit and Moq framework to do the automated testing.
