@@ -11,6 +11,7 @@ namespace ServiceLayer.Constants
         public const string STATUS_EMAIL_OK = "STATUS_EMAIL_OK";
         public const string STATUS_EMAIL_FAIL = "STATUS_EMAIL_FAIL";
         public const string STATUS_EMAIL_INVALID = "STATUS_EMAIL_INVALID";
+        public const string STATUS_BLOCKED_EMAIL = "STATUS_BLOCKED_EMAIL";
 
         public const string STATUS_OTP_OK = "STATUS_OTP_OK";
         public const string STATUS_OTP_FAIL = "STATUS_OTP_FAIL";

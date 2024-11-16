@@ -9,10 +9,24 @@ namespace ServiceLayer
 {
     public class EmailOTPModule : IEmailOTPModule
     {
-        public int OtpDuration { get; set; }
-        public int MaxTries { get; set; }
+        private int OtpDuration { get; set; }
+        private int MaxTries { get; set; }
 
         private readonly ConcurrentDictionary<string, (string OTP, Timer Timer, DateTime ExpirationTime)> userOTPs = new();
+        private readonly HashSet<string> WhiteListedDomainList = new HashSet<string> { "dso.org.sg" };
+
+        public EmailOTPModule()
+        {
+        }
+
+        public EmailOTPModule(string whiteListedDomains)
+        {
+            var domains = whiteListedDomains.Split(',');
+            if (domains.Length > 0)
+            {
+                WhiteListedDomainList = new HashSet<string>(domains);
+            }
+        }
 
         public void Start(int otpDuration = 60000, int maxTries = 10)
         {
@@ -34,10 +48,23 @@ namespace ServiceLayer
             }
         }
 
+        private bool IsDomainWhiteListed(string email)
+        {
+            string domain = email.Split('@')[1];
+            return WhiteListedDomainList.Contains(domain);
+        }
+
         public string GenerateOTPEmail(string userEmail)
         {
-            if (!EmailOTPHelper.IsValidEmail(userEmail) || !userEmail.EndsWith("@dso.org.sg"))
+            if (!EmailOTPHelper.IsValidEmail(userEmail))
+            {
                 return StatusCode.STATUS_EMAIL_INVALID;
+            }
+
+            if (!IsDomainWhiteListed(userEmail))
+            {
+                return StatusCode.STATUS_BLOCKED_EMAIL;
+            }
 
             try
             {
@@ -104,6 +131,10 @@ namespace ServiceLayer
                             cts.Cancel();
                             return StatusCode.STATUS_OTP_OK;
                         }
+                        else
+                        {
+                            Console.WriteLine($"Try again.");
+                        }
                     }
                     catch (OperationCanceledException)
                     {
@@ -115,7 +146,6 @@ namespace ServiceLayer
                     }
                     finally
                     {
-                        Console.WriteLine($"Try again.");
                         tries++;
                     }
                 }

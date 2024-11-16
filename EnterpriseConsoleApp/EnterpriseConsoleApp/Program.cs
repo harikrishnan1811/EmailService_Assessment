@@ -34,6 +34,10 @@ namespace EnterpriseConsoleApp
                 {
                     Console.WriteLine("Invalid email.");
                 }
+                else if (status == StatusCode.STATUS_BLOCKED_EMAIL)
+                {
+                    Console.WriteLine("Domain not whitelisted.");
+                }
                 else
                 {
                     Console.WriteLine("Failed to send OTP.");
